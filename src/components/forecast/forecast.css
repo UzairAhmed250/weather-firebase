@@ -1,0 +1,44 @@
+.weather-forecast {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.forecast-container {
+    display: flex;
+    justify-content: space-between;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.five-day-forecast, .hourly-forecast {
+    flex: 1;
+    margin-right: 20px;
+}
+
+h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.forecast-day, .forecast-hour {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.icon {
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.temp, .day, .time, .wind {
+    margin-right: 15px;
+}
+
+.temp {
+    font-weight: bold;
+}
