@@ -39,7 +39,6 @@ function Router() {
     },
     
     {
-
         path: "/",
         element: <PrivateLayout />,
         children: [
