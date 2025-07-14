@@ -1,17 +1,11 @@
 // import logo from './logo.svg';
-import './App.css';
-import Router from './components/router/router/index';
-
-
-
+import "./App.css";
+import Router from "./components/router/router/index";
 
 function App() {
-  
-
   return (
-    <div >
-    <Router />
-    
+    <div>
+      <Router />
     </div>
   );
 }
