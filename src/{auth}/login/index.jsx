@@ -37,7 +37,7 @@ function Login() {
 };
 
   return (
-    <div className="flex flex-col gap-12 m-auto text-center w-2/6 shadow-[5px_10px_5px_2px_rgba(0,0,0,0.9)] rounded-3xl bg-[#44444] h-[95vh] mt-5 mb-5">
+    <div className="flex flex-col gap-12 m-auto text-center w-2/6 shadow-[0px_0px_5px_2px_rgba(0,0,0,0.9)] rounded-3xl bg-[#44444] h-[95vh] mt-5 mb-5">
       <div className="flex flex-col gap-4 pt-14">
         <div className="text-white text-[35px]">
           <LoginOutlined />

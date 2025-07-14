@@ -10,7 +10,7 @@ export default function Header() {
       <div className=" h-6">
       <input type="checkbox" 
                id="switch" 
-               class="checkbox" 
+               className="checkbox" 
                />
         <label htmlFor="switch" className="toggle">
           <p>&nbsp;&nbsp;</p>
