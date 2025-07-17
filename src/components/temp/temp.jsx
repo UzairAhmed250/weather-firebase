@@ -6,24 +6,24 @@ import humid from "../../assets/humidity.png";
 import press from "../../assets/pressure.png";
 import wind from "../../assets/wind.svg";
 import uv from "../../assets/uv.png";
-import { getWeatherByCity } from "../../api/weather";
+// import { getWeatherByCity } from "../../api/weather";
 import PendingIcon from '@mui/icons-material/Pending';
 
-function Temp() {
-  const [weatherData, setWeatherData] = useState(null)
-  const [loading , setLoading] = useState(false)
-
-  useEffect(() => {
-    setLoading(true);
-    getWeatherByCity("London")
-      .then(data => {
-        setWeatherData(data);
-      })
-      .catch(error => {
-        console.error(error);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+function Temp({weatherData, loading}) {
+  // const [weatherData, setWeatherData] = useState(null)
+  // const [loading , setLoading] = useState(false)
+console.log("weatherData here",  weatherData)
+  // useEffect(() => {
+  //   setLoading(true);
+  //   getWeatherByCity("London")
+  //     .then(data => {
+  //       setWeatherData(data);
+  //     })
+  //     .catch(error => {
+  //       console.error(error);
+  //     })
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   if(loading){
     return <div className="text-white text-center mt-10"><PendingIcon /> </div>
@@ -83,7 +83,7 @@ function Temp() {
         </div>
         <div className="flex flex-col justify-center items-center gap-5">
           <div className="w-28">
-            <img src={current.weather_icons[0]} alt="sun" />
+            <img className="bg-black w-full rounded-lg " src={current.weather_icons[0]} alt="sun" />
           </div>
           <div className=" text-white text-[25px] font-semibold">{current.weather_descriptions[0]}</div>
         </div>
@@ -93,14 +93,14 @@ function Temp() {
             <div>
               <img className="w-14" src={humid} alt="Humidity" />
             </div>
-            <div className="text-[white] font-semibold"> {current.humidity}% </div>
+            <div className="text-[white] font-semibold"> {current.humidity} % </div>
             <div className="text-[white] text-[14px]"> Humidity </div>
           </div>
           <div>
             <div>
               <img className="w-14" src={press} alt="Pressure" />
             </div>
-            <div className="text-[white] font-semibold"> {current.pressure}hpa </div>
+            <div className="text-[white] font-semibold"> {current.pressure} hpa </div>
             <div className="text-[white] text-[14px]"> Pressure </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ function Temp() {
             <div className=" mt-6">
               <img className="w-14" src={wind} alt="Wind" />
             </div>
-            <div className="text-[white] font-semibold "> {current.wind_speed}km/h </div>
+            <div className="text-[white] font-semibold "> {current.wind_speed} km/h </div>
             <div className="text-[white] text-[14px]"> Wind Speed </div>
           </div>
           <div className="flex flex-col items-center mt-1 ">

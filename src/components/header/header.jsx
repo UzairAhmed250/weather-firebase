@@ -3,20 +3,20 @@ import React, { useEffect, useState } from "react";
 import "./header.css";
 import { GlobalOutlined, SearchOutlined } from "@ant-design/icons";
 
-export default function Header({ onSearch }) {
+export default function Header({ onSearch, onCurrentLocation }) {
   const [input, setInput] = useState("");
 
   const handleInputChange = (e) => setInput(e.target.value);
 
 
   useEffect(() => {
-    if (!input.trim()) return; // Don't search for empty input
+    if (!input.trim()) return; 
 
     const handler = setTimeout(() => {
       onSearch(input.trim());
-    }, 500); // 500ms debounce
+    }, 5000); 
 
-    return () => clearTimeout(handler); // Clear timer if input changes
+    return () => clearTimeout(handler); 
   }, [input, onSearch]);
 
 
@@ -44,7 +44,10 @@ export default function Header({ onSearch }) {
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center gap-2 bg-[#59bb18] w-[13%] h-10 rounded-[25px] cursor-pointer shadow-slate-800 shadow">
+      <div
+        className="flex justify-center items-center gap-2 bg-[#59bb18] w-[13%] h-10 rounded-[25px] cursor-pointer shadow-slate-800 shadow"
+        onClick={onCurrentLocation}
+      >
         <div className="text-[20px] ">
           <GlobalOutlined />
         </div>
