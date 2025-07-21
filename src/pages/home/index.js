@@ -3,7 +3,7 @@ import Header from "../../components/header/header";
 import Temp from "../../components/temp/temp";
 import Forecast from "../../components/forecast/forecast";
 import MainHeader from "../../components/main-header/main";
-import { getWeatherByCity } from "../../api/weather";
+import { getWeatherByCity, getWeatherForecast } from "../../api/weather";
 
 function Home() {
   const [city, setCity] = useState(null);
@@ -40,6 +40,22 @@ function Home() {
     setCity(newCity);
   }
 
+  useEffect(() => {
+    if (!city) return;
+    setLoading(true);
+    setError(null);
+    getWeatherForecast(city)
+    .then(data => {
+      console.log("forcast" , data)
+    })
+    .catch(err => {
+      console.error (err);
+      setError("Failed to fetch Weather forecast");
+      setWeatherData(null);
+    })
+    .finally(() => setLoading(false));
+  }, [city])
+
   const handleCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -50,6 +66,7 @@ function Home() {
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
             );
             const data = await response.json();
+            console.log("datadata" , data)
             const city =
               data.address.city ||
               data.address.town ||

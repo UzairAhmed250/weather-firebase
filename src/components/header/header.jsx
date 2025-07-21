@@ -10,7 +10,7 @@ export default function Header({ onSearch, onCurrentLocation }) {
 
 
   useEffect(() => {
-    if (!input.trim()) return; 
+    // if (!input.trim()) return; 
 
     const handler = setTimeout(() => {
       onSearch(input.trim());
