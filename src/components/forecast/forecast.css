@@ -3,7 +3,6 @@
     flex-direction: column;
     gap: 20px;
     color: white;
-    font-family: Arial, sans-serif;
 }
 
 .forecast-container {
@@ -17,11 +16,6 @@
 .five-day-forecast, .hourly-forecast {
     flex: 1;
     margin-right: 20px;
-}
-
-h2 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
 }
 
 .forecast-day, .forecast-hour {
@@ -39,6 +33,26 @@ h2 {
     margin-right: 15px;
 }
 
-.temp {
-    font-weight: bold;
+.hourly-forecast-row {
+    display: flex;
+    width: 100%;
+    gap: 0.5rem;
+    overflow-x: auto;
+}
+
+.hourly-forecast-row > * {
+    flex: 0 0 5.5rem;
+}
+
+@media (min-width: 640px) {
+    .hourly-forecast-row {
+        overflow: visible;
+        gap: 0.75rem;
+    }
+
+    .hourly-forecast-row > * {
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
+    }
 }

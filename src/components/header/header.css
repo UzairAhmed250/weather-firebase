@@ -1,4 +1,12 @@
       
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration,
+.search-input::-webkit-search-results-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
 /* toggle in label designing */
 .toggle {
     position : relative ;

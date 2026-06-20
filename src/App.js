@@ -1,12 +1,12 @@
-// import logo from './logo.svg';
 import "./App.css";
 import Router from "./components/router/router/index";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <div>
+    <AuthProvider>
       <Router />
-    </div>
+    </AuthProvider>
   );
 }
 

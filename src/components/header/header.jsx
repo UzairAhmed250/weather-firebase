@@ -1,58 +1,76 @@
 import React, { useEffect, useState } from "react";
-// import SearchOutlined from 'antd';
 import "./header.css";
-import { GlobalOutlined, SearchOutlined } from "@ant-design/icons";
+import { CloseOutlined, GlobalOutlined, SearchOutlined } from "@ant-design/icons";
 
 export default function Header({ onSearch, onCurrentLocation }) {
   const [input, setInput] = useState("");
 
-  const handleInputChange = (e) => setInput(e.target.value);
-
-
   useEffect(() => {
-    // if (!input.trim()) return; 
+    if (!input.trim()) return;
 
     const handler = setTimeout(() => {
       onSearch(input.trim());
-    }, 5000); 
+    }, 500);
 
-    return () => clearTimeout(handler); 
+    return () => clearTimeout(handler);
   }, [input, onSearch]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (input.trim()) {
+      onSearch(input.trim());
+    }
+  };
+
+  const handleClear = () => {
+    setInput("");
+    onCurrentLocation();
+  };
 
   return (
-    <div className=" flex justify-around items-center mt-5 ">
-      <div className=" h-6">
+    <div className="mt-5 flex flex-wrap items-center justify-around gap-4 px-4">
+      <div className="h-6">
         <input type="checkbox" id="switch" className="checkbox" />
         <label htmlFor="switch" className="toggle">
           <p>&nbsp;&nbsp;</p>
         </label>
       </div>
-      <div className="relative w-[50%]">
-        <form className="w-[100%]">
+
+      <div className="relative w-full max-w-xl sm:w-[50%]">
+        <form className="w-full" onSubmit={handleSubmit}>
           <input
             type="search"
-            placeholder="Search for your preffered city..."
-            className=" w-[100%] rounded-[50px] h-10 bg-[#444444] border-[none]  shadow-slate-800 shadow pl-14"
-            onChange={handleInputChange}
+            placeholder="Search for your preferred city..."
+            className="search-input h-10 w-full rounded-[50px] border border-[#59bb18] bg-[#3a3a3a] pl-14 pr-11 font-sans text-sm font-medium text-white shadow shadow-slate-800 outline-none placeholder:font-normal placeholder:text-[#9ca3af] focus:border-[#59bb18] focus:ring-2 focus:ring-[#59bb18]/40 sm:text-base"
+            onChange={(e) => setInput(e.target.value)}
             value={input}
           />
         </form>
-        <div>
-          <div className="absolute top-0 left-5 text-[24px] text-center pt-[2px] text-[white]">
-            <SearchOutlined />
-          </div>
+        <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-[20px] text-[#59bb18]">
+          <SearchOutlined />
         </div>
+        {input.trim() && (
+          <button
+            type="button"
+            onClick={handleClear}
+            aria-label="Clear search and show current location"
+            className="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-[#555555] text-xs text-[#d4d4d4] transition hover:bg-[#666666] hover:text-white"
+          >
+            <CloseOutlined />
+          </button>
+        )}
       </div>
-      <div
-        className="flex justify-center items-center gap-2 bg-[#59bb18] w-[13%] h-10 rounded-[25px] cursor-pointer shadow-slate-800 shadow"
+
+      <button
+        type="button"
+        className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-[25px] bg-[#59bb18] shadow shadow-slate-800 sm:w-[13%]"
         onClick={onCurrentLocation}
       >
-        <div className="text-[20px] ">
-          <GlobalOutlined />
-        </div>
-        <div className="text-white font-semibold">Current Location</div>
-      </div>
+        <GlobalOutlined className="text-[20px] text-white" />
+        <span className="font-sans text-sm font-semibold text-white sm:text-base">
+          Current Location
+        </span>
+      </button>
     </div>
   );
 }

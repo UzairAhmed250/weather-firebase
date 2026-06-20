@@ -1,28 +1,43 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-
-
-
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDF8vKRLnxZ2HbHcyRYnFmR3D_HEmQCCwM",
-  authDomain: "weather-app-4d783.firebaseapp.com",
-  projectId: "weather-app-4d783",
-  storageBucket: "weather-app-4d783.firebasestorage.app",
-  messagingSenderId: "754801590483",
-  appId: "1:754801590483:web:35f656aac8f64521a1d426",
-  measurementId: "G-E0VKLGZJ6M",
-  databaseURL: "https://weather-app-4d783-default-rtdb.firebaseio.com/"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
-// const db = firebase.firestore();
-
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const firestore = getFirestore(app);
 
-const analytics = getAnalytics(app);
-export {firestore, collection, addDoc, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword }
-export default app 
+isSupported().then((supported) => {
+  if (supported) {
+    getAnalytics(app);
+  }
+});
+
+export {
+  app,
+  auth,
+  firestore,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged,
+};
+export default app;
