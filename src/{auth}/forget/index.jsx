@@ -1,38 +1,85 @@
-import { ArrowLeftOutlined } from '@ant-design/icons'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { auth, sendPasswordResetEmail } from "../../config/firebase/config";
 
 function Forget() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSuccess("Password reset email sent. Check your inbox.");
+    } catch (err) {
+      setError(
+        err.code === "auth/user-not-found"
+          ? "No account found with this email."
+          : "Failed to send reset email. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div>
-    <div className='m-auto text-center w-2/6 shadow-[3px_10px_10px_1px_rgba(0,0,0,0.9)] rounded-3xl bg-[#44444] h-[35vh] mt-52 mb-52'>
-        <div className='flex justify-between items-center' >
-            <Link to="/"><div
-             className='mt-5 px-1 ml-7 overflow-x-auto text-white text-[22px] font-semibold cursor-pointer hover:bg-[#D8D8D8] hover:text-[#59bb18] '>
-                <ArrowLeftOutlined />
-                </div>
-                </Link>
-            <div className='text-[24px] font-semibold text-white pt-5 mr-8'>Forgot password</div>
-            <div className=''></div>
+    <form onSubmit={handleSubmit}>
+      <div className="mx-auto mb-52 mt-52 w-[90%] max-w-lg rounded-3xl bg-[#444444] py-6 text-center shadow-[3px_10px_10px_1px_rgba(0,0,0,0.9)] sm:w-2/6">
+        <div className="flex items-center justify-between px-6">
+          <Link to="/">
+            <span className="cursor-pointer text-[22px] font-semibold text-white hover:text-[#59bb18]">
+              <ArrowLeftOutlined />
+            </span>
+          </Link>
+          <div className="text-[24px] font-semibold text-white">
+            Forgot password
+          </div>
+          <div className="w-6" />
         </div>
-        <div className='flex flex-col gap-2'>
-            <div className='text-left text-white font-light pr-8 pl-8'>
-                <label htmlFor='Email' >Email</label>
-            </div >
-            <div className="w-[100%] text-left pr-8 pl-8">
-                <input 
-                className='w-[100%] pl-10 h-10 border border-inherit outline-none rounded-xl focus:border-[#59bb18]' 
-                type='text'
-                 placeholder='Enter your email' 
-                 required />
-            </div>
+
+        <div className="mt-6 flex flex-col gap-2 px-8">
+          <label htmlFor="email" className="text-left font-light text-white">
+            Email
+          </label>
+          <input
+            id="email"
+            className="h-10 w-full rounded-xl border border-inherit pl-4 outline-none focus:border-[#59bb18]"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-        <div className='bg-[#59bb18] rounded-[25px] cursor-pointer w-[50%] text-white h-10 text-[20px] font-light pt-1 ml-32 mt-8 '>
-            <button className='w-[100%] rounded-[25px] h-7 '>Send email</button>
-        </div>
-    </div>
-</div>
-  )
+
+        {error && (
+          <div className="mx-8 mt-4 rounded-lg bg-red-900/50 px-3 py-2 text-sm text-white">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mx-8 mt-4 rounded-lg bg-green-900/50 px-3 py-2 text-sm text-white">
+            {success}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="mx-auto mt-8 block h-10 w-1/2 rounded-[25px] bg-[#59bb18] text-[20px] font-light text-white disabled:opacity-60"
+        >
+          {loading ? "Sending..." : "Send email"}
+        </button>
+      </div>
+    </form>
+  );
 }
 
-export default Forget
+export default Forget;

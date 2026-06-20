@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    background-color: #444444;
+body {
+  @apply bg-[#444444] font-sans antialiased;
 }

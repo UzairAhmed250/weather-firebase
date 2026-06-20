@@ -9,51 +9,25 @@ import Forget from "../../../{auth}/forget";
 import AuthLayout from "../../authlayout/authLayout";
 import PrivateLayout from "../../privateLayout/privateLayout";
 
-function Router() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <AuthLayout />,
-      children:[
-        { 
-          path: "/",
-          element: <Login />, 
-        },
-        { 
-          path: "/signup",
-          element: <SignUp />,
-        },
-        { 
-          path: "/forgot-password",
-          element: <Forget />,
-        },
-        {
-          path: "/aboutus",
-          element: <About />,
-        },
-        {
-          path: "/contactus",
-          element: <Contact />,
-        }
-      ]
-    },
-    
-    {
-        path: "/",
-        element: <PrivateLayout />,
-        children: [
-          {
-            path: "/home",
-            element: <Home />}
-        ]
-    },
-    ]);
+const router = createBrowserRouter([
+  {
+    element: <AuthLayout />,
+    children: [
+      { index: true, element: <Login /> },
+      { path: "signup", element: <SignUp /> },
+      { path: "forgot-password", element: <Forget /> },
+      { path: "aboutus", element: <About /> },
+      { path: "contactus", element: <Contact /> },
+    ],
+  },
+  {
+    element: <PrivateLayout />,
+    children: [{ path: "home", element: <Home /> }],
+  },
+]);
 
-  return (
-    <div>
-      <RouterProvider router={router}></RouterProvider>
-    </div>
-  );
+function Router() {
+  return <RouterProvider router={router} />;
 }
 
 export default Router;
