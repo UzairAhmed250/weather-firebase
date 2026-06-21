@@ -2,7 +2,8 @@ import { LoginOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, signInWithEmailAndPassword } from "../../config/firebase/config";
-import { ensureUserProfile } from "../../services/firestoreService";
+import { ensureUserProfile, updateUserLocation } from "../../services/firestoreService";
+import { getCurrentUserLocation } from "../../services/locationService";
 
 const getAuthErrorMessage = (code) => {
   switch (code) {
@@ -35,7 +36,12 @@ function Login() {
 
       await ensureUserProfile(userCredential.user.uid, userDetails.email);
 
-      navigate("/home");
+      const coords = await getCurrentUserLocation();
+      if (coords) {
+        await updateUserLocation(userCredential.user.uid, coords);
+      }
+
+      navigate("/");
     } catch (err) {
       setError(getAuthErrorMessage(err.code));
     } finally {
@@ -57,8 +63,8 @@ function Login() {
         <div className="text-[24px] font-bold text-[#fcfdff]">Weather Web</div>
         <div className="mx-8">
           <p className="text-left text-[16px] text-white">
-            Sign in to access real-time weather forecasts, hourly updates, and
-            location-based reports for cities worldwide.
+            Sign in to sync your search history across devices. You can also
+            browse weather without an account.
           </p>
         </div>
       </div>
@@ -112,6 +118,12 @@ function Login() {
             className="block h-10 rounded-[25px] bg-[#59bb18] pt-1 text-[20px] font-bold text-white"
           >
             Register
+          </Link>
+          <Link
+            to="/"
+            className="block text-sm font-medium text-[#b3b3b3] hover:text-white"
+          >
+            Continue without signing in
           </Link>
         </div>
       </form>

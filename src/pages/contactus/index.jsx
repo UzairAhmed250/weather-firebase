@@ -54,7 +54,7 @@ function Contact() {
         to="/"
         className="mt-6 inline-block text-[#59bb18] hover:underline"
       >
-        Back to Login
+        Back to Home
       </Link>
     </div>
   );

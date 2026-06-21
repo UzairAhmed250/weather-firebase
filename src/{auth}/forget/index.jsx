@@ -33,7 +33,7 @@ function Forget() {
     <form onSubmit={handleSubmit}>
       <div className="mx-auto mb-52 mt-52 w-[90%] max-w-lg rounded-3xl bg-[#444444] py-6 text-center shadow-[3px_10px_10px_1px_rgba(0,0,0,0.9)] sm:w-2/6">
         <div className="flex items-center justify-between px-6">
-          <Link to="/">
+          <Link to="/login">
             <span className="cursor-pointer text-[22px] font-semibold text-white hover:text-[#59bb18]">
               <ArrowLeftOutlined />
             </span>

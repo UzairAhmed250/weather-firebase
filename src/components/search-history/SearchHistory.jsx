@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { HistoryOutlined } from "@ant-design/icons";
 
 function formatSearchedAt(timestamp) {
@@ -13,10 +14,10 @@ function formatSearchedAt(timestamp) {
   });
 }
 
-function SearchHistory({ history, loading, onSelect }) {
+function SearchHistory({ history, loading, onSelect, isGuest }) {
   if (loading) {
     return (
-      <div className="mx-auto mt-6 max-w-6xl px-4">
+      <div className="mx-auto mt-4 max-w-6xl px-2 sm:mt-6 sm:px-4">
         <div className="rounded-2xl bg-[#444444] px-4 py-5 shadow-md">
           <div className="mx-auto h-5 w-40 animate-pulse rounded bg-[#5a5a5a]" />
           <div className="mt-4 space-y-2">
@@ -30,16 +31,41 @@ function SearchHistory({ history, loading, onSelect }) {
   }
 
   if (!history?.length) {
+    if (isGuest) {
+      return (
+        <div className="mx-auto mt-4 max-w-6xl px-2 sm:mt-6 sm:px-4">
+          <div className="rounded-2xl bg-[#444444] px-4 py-5 text-center shadow-md sm:px-6">
+            <p className="text-sm text-[#d4d4d4]">
+              <Link to="/login" className="font-semibold text-[#59bb18] hover:underline">
+                Sign in
+              </Link>{" "}
+              to save and sync your search history across devices.
+            </p>
+          </div>
+        </div>
+      );
+    }
     return null;
   }
 
   return (
-    <div className="mx-auto mt-6 max-w-6xl px-4">
+    <div className="mx-auto mt-4 max-w-6xl px-2 sm:mt-6 sm:px-4">
       <div className="rounded-2xl bg-[#444444] px-4 py-5 shadow-md sm:px-6">
-        <h2 className="flex items-center justify-center gap-2 font-display text-lg font-bold text-white sm:justify-start sm:text-xl">
-          <HistoryOutlined />
-          Recent Searches
-        </h2>
+        <div className="flex flex-col items-center gap-1 sm:items-start">
+          <h2 className="flex items-center justify-center gap-2 font-display text-lg font-bold text-white sm:justify-start sm:text-xl">
+            <HistoryOutlined />
+            Recent Searches
+          </h2>
+          {isGuest && (
+            <p className="text-center text-xs text-[#b3b3b3] sm:text-left">
+              Saved on this device only.{" "}
+              <Link to="/login" className="text-[#59bb18] hover:underline">
+                Sign in
+              </Link>{" "}
+              to sync across devices.
+            </p>
+          )}
+        </div>
         <ul className="mt-4 space-y-2">
           {history.map((item) => (
             <li key={item.id}>

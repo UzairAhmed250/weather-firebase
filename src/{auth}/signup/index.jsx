@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
 } from "../../config/firebase/config";
 import { createUserProfile } from "../../services/firestoreService";
+import { getCurrentUserLocation } from "../../services/locationService";
 
 const getAuthErrorMessage = (code) => {
   switch (code) {
@@ -43,13 +44,18 @@ function SignUp() {
         userDetail.password
       );
 
+      const coords = await getCurrentUserLocation();
+
       await createUserProfile(userCredential.user.uid, {
         firstName: userDetail.firstName,
         lastName: userDetail.lastName,
         email: userDetail.email,
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
+        location: coords?.location ?? "",
       });
 
-      navigate("/home");
+      navigate("/");
     } catch (err) {
       setError(getAuthErrorMessage(err.code));
     } finally {
@@ -72,7 +78,7 @@ function SignUp() {
         </div>
         <div className="text-white font-light">
           Already have an account?
-          <Link to="/">
+          <Link to="/login">
             <span className="cursor-pointer rounded-[50px] px-2 font-semibold text-[#59bb18] hover:bg-[#59bb18] hover:text-white">
               Login
             </span>

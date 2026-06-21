@@ -7,22 +7,25 @@ import Login from "../../../{auth}/login";
 import SignUp from "../../../{auth}/signup";
 import Forget from "../../../{auth}/forget";
 import AuthLayout from "../../authlayout/authLayout";
-import PrivateLayout from "../../privateLayout/privateLayout";
+import AppLayout from "../../app-layout/AppLayout";
 
 const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
-      { index: true, element: <Login /> },
-      { path: "signup", element: <SignUp /> },
-      { path: "forgot-password", element: <Forget /> },
-      { path: "aboutus", element: <About /> },
-      { path: "contactus", element: <Contact /> },
+      {
+        element: <AppLayout />,
+        children: [
+          { index: true, element: <Home /> },
+          { path: "home", element: <Home /> },
+          { path: "login", element: <Login /> },
+          { path: "signup", element: <SignUp /> },
+          { path: "forgot-password", element: <Forget /> },
+          { path: "aboutus", element: <About /> },
+          { path: "contactus", element: <Contact /> },
+        ],
+      },
     ],
-  },
-  {
-    element: <PrivateLayout />,
-    children: [{ path: "home", element: <Home /> }],
   },
 ]);
 

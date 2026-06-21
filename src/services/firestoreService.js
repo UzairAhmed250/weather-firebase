@@ -9,6 +9,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, firestore } from "../config/firebase/config";
 
@@ -41,11 +42,17 @@ function getCurrentUserId() {
   return userId;
 }
 
-export async function createUserProfile(userId, { firstName, lastName, email }) {
+export async function createUserProfile(
+  userId,
+  { firstName, lastName, email, lat = null, lng = null, location = "" }
+) {
   await setDoc(doc(firestore, "users", userId), {
     firstName,
     lastName,
     email,
+    lat,
+    lng,
+    location,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -60,10 +67,22 @@ export async function ensureUserProfile(userId, email) {
       email,
       firstName: "",
       lastName: "",
+      lat: null,
+      lng: null,
+      location: "",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
   }
+}
+
+export async function updateUserLocation(userId, { lat, lng, location }) {
+  await updateDoc(doc(firestore, "users", userId), {
+    lat,
+    lng,
+    location,
+    updatedAt: serverTimestamp(),
+  });
 }
 
 export async function saveSearchHistory(entry) {
