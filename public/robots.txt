@@ -1,3 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+
+Sitemap: https://weather-app-4d783.web.app/sitemap.xml

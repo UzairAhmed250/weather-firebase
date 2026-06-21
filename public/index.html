@@ -3,18 +3,99 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Real-time weather forecasts and current conditions for cities worldwide." />
-    <meta name="theme-color" content="#444444" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Primary SEO -->
+    <title>Wethr AI — Real-Time Weather Forecasts & Current Conditions Worldwide</title>
+    <meta
+      name="description"
+      content="Wethr AI gives you fast, accurate real-time weather forecasts, current conditions, hourly and 7-day predictions for any city in the world. Free, mobile-friendly, no signup needed."
+    />
+    <meta
+      name="keywords"
+      content="weather, weather app, real-time weather, weather forecast, current weather, hourly forecast, 7 day forecast, temperature, humidity, wind speed, weather by city, wethr ai"
+    />
+    <meta name="author" content="Wethr AI" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="canonical" href="https://weather-app-4d783.web.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wethr AI" />
+    <meta property="og:title" content="Wethr AI — Real-Time Weather Forecasts Worldwide" />
+    <meta
+      property="og:description"
+      content="Fast, accurate real-time weather, hourly and 7-day forecasts for any city. Free and mobile-friendly."
+    />
+    <meta property="og:url" content="https://weather-app-4d783.web.app/" />
+    <meta property="og:image" content="https://weather-app-4d783.web.app/wethr-ai-logo.png" />
+    <meta property="og:image:alt" content="Wethr AI logo" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wethr AI — Real-Time Weather Forecasts Worldwide" />
+    <meta
+      name="twitter:description"
+      content="Fast, accurate real-time weather, hourly and 7-day forecasts for any city. Free and mobile-friendly."
+    />
+    <meta name="twitter:image" content="https://weather-app-4d783.web.app/wethr-ai-logo.png" />
+
+    <!-- Icons & PWA -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <title>Weather Web App</title>
+
+    <!-- Structured data: WebApplication + Organization -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Wethr AI",
+            "url": "https://weather-app-4d783.web.app/",
+            "description": "Real-time weather forecasts and current conditions for cities worldwide.",
+            "applicationCategory": "WeatherApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript and a modern browser",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+          },
+          {
+            "@type": "Organization",
+            "name": "Wethr AI",
+            "url": "https://weather-app-4d783.web.app/",
+            "logo": "https://weather-app-4d783.web.app/wethr-ai-logo.png"
+          },
+          {
+            "@type": "WebSite",
+            "url": "https://weather-app-4d783.web.app/",
+            "name": "Wethr AI",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://weather-app-4d783.web.app/?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      Wethr AI requires JavaScript to display interactive weather forecasts.
+      Please enable JavaScript in your browser to view real-time weather, hourly, and 7-day forecasts for any city.
+    </noscript>
     <div id="root"></div>
   </body>
 </html>

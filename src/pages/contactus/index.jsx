@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import useSEO from "../../utils/useSEO";
 
 function Contact() {
+  useSEO({
+    title: "Contact Wethr AI — Get in Touch",
+    description:
+      "Have questions, feedback or partnership ideas? Contact the Wethr AI team — we’d love to hear from you.",
+    path: "/contactus",
+  });
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {

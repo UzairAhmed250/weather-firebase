@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import useSEO from "../../utils/useSEO";
 import Header from "../../components/header/header";
 import Temp from "../../components/temp/temp";
 import Forecast from "../../components/forecast/forecast";
@@ -36,6 +37,12 @@ function inferQueryType(query) {
 }
 
 function Home() {
+  useSEO({
+    title: "Wethr AI — Real-Time Weather Forecasts & Current Conditions",
+    description:
+      "Check real-time weather, hourly forecasts and 7-day predictions for any city. Fast, accurate, mobile-friendly weather updates worldwide.",
+    path: "/",
+  });
   const { user } = useAuth();
   const searchMetaRef = useRef({});
   const [city, setCity] = useState("");
