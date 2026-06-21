@@ -143,9 +143,11 @@ export default function Header({ onSearch, onCurrentLocation }) {
                 {suggestions.map((item) => {
                   const label = formatSuggestionLabel(item);
                   return (
-                    <li key={`${item.id}-${item.lat}-${item.lon}`} role="option">
+                    <li key={`${item.id}-${item.lat}-${item.lon}`}>
                       <button
                         type="button"
+                        role="option"
+                        aria-selected={false}
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => handleSelect(item)}
                         className="flex w-full flex-col px-4 py-2.5 text-left transition hover:bg-[#505050]"
