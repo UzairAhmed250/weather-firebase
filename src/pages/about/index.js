@@ -11,14 +11,14 @@ function About() {
         world. Data is powered by the Weatherstack API.
       </p>
       <p className="mt-4 leading-relaxed text-[#e0e0e0]">
-        Create an account to save your session and access personalized weather
-        reports from any device.
+        Create an account to sync your search history across devices, or browse
+        weather without signing in.
       </p>
       <Link
         to="/"
         className="mt-8 inline-block rounded-[25px] bg-[#59bb18] px-6 py-2 font-semibold text-white hover:opacity-90"
       >
-        Back to Login
+        Back to Home
       </Link>
     </div>
   );

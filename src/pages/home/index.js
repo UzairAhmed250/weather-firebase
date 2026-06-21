@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Header from "../../components/header/header";
 import Temp from "../../components/temp/temp";
 import Forecast from "../../components/forecast/forecast";
-import MainHeader from "../../components/main-header/main";
 import SearchHistory from "../../components/search-history/SearchHistory";
 import { useAuth } from "../../context/AuthContext";
 import { auth } from "../../config/firebase/config";
@@ -16,7 +15,13 @@ import {
 import {
   getSearchHistory,
   saveSearchHistory,
+  updateUserLocation,
 } from "../../services/firestoreService";
+import {
+  clearLocalSearchHistory,
+  getLocalSearchHistory,
+  saveLocalSearchHistory,
+} from "../../services/localSearchHistory";
 
 const GEOLOCATION_ERRORS = {
   1: "Permission denied — allow location access in your browser.",
@@ -33,7 +38,6 @@ function inferQueryType(query) {
 function Home() {
   const { user } = useAuth();
   const searchMetaRef = useRef({});
-  const pendingSaveRef = useRef(null);
   const [city, setCity] = useState("");
   const [locationLabel, setLocationLabel] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
@@ -46,13 +50,27 @@ function Home() {
 
   const loadSearchHistory = useCallback(async () => {
     if (!auth.currentUser?.uid) {
-      setSearchHistory([]);
+      setSearchHistory(getLocalSearchHistory());
       return;
     }
 
     setHistoryLoading(true);
 
     try {
+      const local = getLocalSearchHistory();
+      if (local.length) {
+        for (const item of [...local].reverse()) {
+          await saveSearchHistory({
+            query: item.query,
+            queryType: item.queryType,
+            locationLabel: item.locationLabel,
+            weather: item.weather,
+            forecast: item.forecast,
+          });
+        }
+        clearLocalSearchHistory();
+      }
+
       const history = await getSearchHistory();
       setSearchHistory(history);
     } catch (err) {
@@ -70,14 +88,14 @@ function Home() {
   const persistSearchHistory = useCallback(
     async (payload) => {
       if (!auth.currentUser?.uid) {
-        pendingSaveRef.current = payload;
+        const updated = saveLocalSearchHistory(payload);
+        setSearchHistory(updated);
         return;
       }
 
       try {
         setSaveError(null);
         await saveSearchHistory(payload);
-        pendingSaveRef.current = null;
         await loadSearchHistory();
       } catch (err) {
         const message =
@@ -138,11 +156,6 @@ function Home() {
     loadSearchHistory();
   }, [loadSearchHistory, user]);
 
-  useEffect(() => {
-    if (!user?.uid || !pendingSaveRef.current) return;
-    persistSearchHistory(pendingSaveRef.current);
-  }, [user, persistSearchHistory]);
-
   const handleCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError("[Geolocation] Not supported by this browser.");
@@ -162,6 +175,15 @@ function Home() {
         try {
           const label = await reverseGeocodeLabel(latitude, longitude);
           setLocationLabel(label);
+
+          if (auth.currentUser?.uid) {
+            updateUserLocation(auth.currentUser.uid, {
+              lat: latitude,
+              lng: longitude,
+              location: label,
+            }).catch((err) => console.error("[Firestore] Failed to save location:", err));
+          }
+
           requestWeather(query, {
             queryType: "current_location",
             locationLabel: label,
@@ -186,10 +208,13 @@ function Home() {
     handleCurrentLocation();
   }, [handleCurrentLocation]);
 
-  const handleSearch = (newCity) => {
+  const handleSearch = (newCity, meta = {}) => {
     if (newCity) {
-      setLocationLabel(null);
-      requestWeather(newCity, { queryType: "city" });
+      setLocationLabel(meta.locationLabel || null);
+      requestWeather(newCity, {
+        queryType: meta.queryType || "city",
+        locationLabel: meta.locationLabel,
+      });
     }
   };
 
@@ -204,8 +229,7 @@ function Home() {
   const todayAstro = getTodayAstro(forecastData);
 
   return (
-    <div className="min-h-screen pb-10">
-      <MainHeader />
+    <div className="min-h-screen pb-6 sm:pb-10">
       <Header onSearch={handleSearch} onCurrentLocation={handleCurrentLocation} />
       {error && (
         <div className="mx-auto mt-4 w-[90%] max-w-4xl rounded-xl bg-red-900/60 px-4 py-3 text-center text-white">
@@ -228,6 +252,7 @@ function Home() {
         history={searchHistory}
         loading={historyLoading}
         onSelect={handleHistorySelect}
+        isGuest={!user}
       />
     </div>
   );

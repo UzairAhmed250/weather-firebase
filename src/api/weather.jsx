@@ -3,6 +3,7 @@ const CURRENT_URL =
   process.env.REACT_APP_BASE_URL;
 const FORECAST_URL =
   process.env.REACT_APP_BASE_URL_FORECAST;
+const SEARCH_URL = "https://api.weatherapi.com/v1/search.json";
 
 const getLocationQuery = (location) => {
   const query = location?.trim();
@@ -114,6 +115,114 @@ function normalizeForecast(data) {
   }
 
   return { forecast };
+}
+
+const MAX_SUGGESTIONS = 10;
+
+async function searchWeatherApi(query) {
+  if (!API_KEY) {
+    return [];
+  }
+
+  const url = `${SEARCH_URL}?key=${API_KEY}&q=${encodeURIComponent(query)}`;
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (!response.ok || data?.error || !Array.isArray(data)) {
+    return [];
+  }
+
+  return data;
+}
+
+async function searchNominatim(query) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=${MAX_SUGGESTIONS}&q=${encodeURIComponent(query)}`;
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "WeatherFirebaseApp/1.0",
+    },
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  return data.map((place) => {
+    const address = place.address || {};
+    const name =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.suburb ||
+      place.name ||
+      place.display_name?.split(",")[0] ||
+      query;
+
+    return {
+      id: `nominatim-${place.place_id}`,
+      name,
+      region: address.state || address.state_district || address.county || "",
+      country: address.country || "",
+      lat: Number(place.lat),
+      lon: Number(place.lon),
+    };
+  });
+}
+
+function dedupeSearchResults(results) {
+  const seen = new Set();
+  const unique = [];
+
+  for (const item of results) {
+    const latKey = Number(item.lat).toFixed(2);
+    const lonKey = Number(item.lon).toFixed(2);
+    const key = `${item.name.toLowerCase()}|${item.country?.toLowerCase() || ""}|${latKey}|${lonKey}`;
+
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    unique.push(item);
+
+    if (unique.length >= MAX_SUGGESTIONS) {
+      break;
+    }
+  }
+
+  return unique;
+}
+
+export async function searchLocations(query) {
+  const trimmed = query?.trim();
+  if (!trimmed || trimmed.length < 2) {
+    return [];
+  }
+
+  const [weatherResults, nominatimResults] = await Promise.allSettled([
+    searchWeatherApi(trimmed),
+    searchNominatim(trimmed),
+  ]);
+
+  const weather =
+    weatherResults.status === "fulfilled" ? weatherResults.value : [];
+  const nominatim =
+    nominatimResults.status === "fulfilled" ? nominatimResults.value : [];
+
+  return dedupeSearchResults([...weather, ...nominatim]);
+}
+
+export function formatSuggestionLabel({ name, region, country }) {
+  if (region && region !== name && !name.includes(region)) {
+    return `${name}, ${region}, ${country}`;
+  }
+  return `${name}, ${country}`;
 }
 
 export async function getWeatherByCity(city) {
