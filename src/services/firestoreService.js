@@ -7,11 +7,14 @@ import {
   limit,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { auth, firestore } from "../config/firebase/config";
+
+const CHAT_RATE_LIMIT_WINDOW_MS = 60 * 1000;
 
 function sanitizeForFirestore(value) {
   if (value === undefined) {
@@ -115,4 +118,133 @@ export async function getSearchHistory(maxResults = 10) {
     id: docSnap.id,
     ...docSnap.data(),
   }));
+}
+
+export async function consumeChatRateLimit({
+  maxMessages = 5,
+  windowMs = CHAT_RATE_LIMIT_WINDOW_MS,
+} = {}) {
+  const userId = getCurrentUserId();
+  const userRef = doc(firestore, "users", userId);
+
+  return runTransaction(firestore, async (transaction) => {
+    const snapshot = await transaction.get(userRef);
+    const now = Date.now();
+    const data = snapshot.exists() ? snapshot.data() : {};
+    const storedTimestamps = Array.isArray(data.chatRateLimitTimestamps)
+      ? data.chatRateLimitTimestamps
+      : [];
+
+    const recentTimestamps = storedTimestamps.filter(
+      (timestamp) => typeof timestamp === "number" && now - timestamp < windowMs
+    );
+
+    if (recentTimestamps.length >= maxMessages) {
+      return {
+        allowed: false,
+        remaining: 0,
+        retryAfterMs: windowMs - (now - recentTimestamps[0]),
+      };
+    }
+
+    const nextTimestamps = [...recentTimestamps, now];
+
+    const baseData = snapshot.exists()
+      ? {
+          chatRateLimitTimestamps: nextTimestamps,
+          updatedAt: serverTimestamp(),
+        }
+      : {
+          email: auth.currentUser?.email || "",
+          firstName: "",
+          lastName: "",
+          lat: null,
+          lng: null,
+          location: "",
+          createdAt: serverTimestamp(),
+          chatRateLimitTimestamps: nextTimestamps,
+          updatedAt: serverTimestamp(),
+        };
+
+    transaction.set(userRef, baseData, { merge: true });
+
+    return {
+      allowed: true,
+      remaining: maxMessages - nextTimestamps.length,
+      retryAfterMs: 0,
+    };
+  });
+}
+
+export async function createChatSession() {
+  const userId = getCurrentUserId();
+
+  await ensureUserProfile(userId, auth.currentUser?.email || "");
+
+  const sessionRef = await addDoc(collection(firestore, "users", userId, "chatSessions"), {
+    title: "New chat",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+
+  return sessionRef.id;
+}
+
+export async function getLatestChatSession() {
+  const userId = getCurrentUserId();
+
+  const sessionQuery = query(
+    collection(firestore, "users", userId, "chatSessions"),
+    orderBy("updatedAt", "desc"),
+    limit(1)
+  );
+
+  const snapshot = await getDocs(sessionQuery);
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const sessionDoc = snapshot.docs[0];
+  return {
+    id: sessionDoc.id,
+    ...sessionDoc.data(),
+  };
+}
+
+export async function getChatSessionMessages(sessionId) {
+  const userId = getCurrentUserId();
+
+  const messagesQuery = query(
+    collection(firestore, "users", userId, "chatSessions", sessionId, "messages"),
+    orderBy("createdAt", "asc")
+  );
+
+  const snapshot = await getDocs(messagesQuery);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  }));
+}
+
+export async function saveChatMessage(sessionId, message) {
+  const userId = getCurrentUserId();
+  const sessionRef = doc(firestore, "users", userId, "chatSessions", sessionId);
+
+  await addDoc(collection(sessionRef, "messages"), {
+    role: message.role,
+    content: message.content,
+    createdAt: serverTimestamp(),
+  });
+
+  await setDoc(
+    sessionRef,
+    {
+      updatedAt: serverTimestamp(),
+      title:
+        message.role === "user" && message.content
+          ? message.content.slice(0, 60)
+          : "New chat",
+    },
+    { merge: true }
+  );
 }
