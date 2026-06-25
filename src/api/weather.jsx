@@ -27,8 +27,23 @@ export async function reverseGeocodeLabel(lat, lon) {
 
   const data = await response.json();
   const address = data?.address;
-  const city = address.city;
-  const area = address.town;
+
+  if (!address) {
+    if (data?.display_name) {
+      return data.display_name.split(",").slice(0, 3).join(",").trim();
+    }
+    throw new Error(
+      `[Reverse Geocode] No address found for coordinates ${lat}, ${lon}`
+    );
+  }
+
+  const city =
+    address.city ||
+    address.town ||
+    address.village ||
+    address.suburb ||
+    address.county;
+  const area = address.town || address.village || address.suburb;
   const country = address.country;
 
   if (area && city && area.toLowerCase() !== city.toLowerCase()) {
@@ -36,6 +51,9 @@ export async function reverseGeocodeLabel(lat, lon) {
   }
   if (city && country) {
     return `${city}, ${country}`;
+  }
+  if (data.display_name) {
+    return data.display_name.split(",").slice(0, 3).join(",").trim();
   }
 
   throw new Error(

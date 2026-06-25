@@ -45,7 +45,6 @@ function Home() {
   });
   const { user } = useAuth();
   const searchMetaRef = useRef({});
-  const [city, setCity] = useState("");
   const [locationLabel, setLocationLabel] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState(null);
@@ -149,15 +148,13 @@ function Home() {
     [persistSearchHistory]
   );
 
-  const requestWeather = useCallback((query, meta = {}) => {
-    searchMetaRef.current = meta;
-    setCity(query);
-  }, []);
-
-  useEffect(() => {
-    if (!city) return;
-    fetchWeather(city, searchMetaRef.current);
-  }, [city, fetchWeather]);
+  const requestWeather = useCallback(
+    (query, meta = {}) => {
+      searchMetaRef.current = meta;
+      fetchWeather(query, meta);
+    },
+    [fetchWeather]
+  );
 
   useEffect(() => {
     loadSearchHistory();
